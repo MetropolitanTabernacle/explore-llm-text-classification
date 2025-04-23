@@ -36,14 +36,15 @@ class GeminiModel(LLMInterface):
         self.client = genai.GenerativeModel(model_name=model_name)
 
     def generate_text(self, prompt: str, system_prompt: Optional[str]=None) -> str:
-        response = self.client.generate_content(prompt)
+        # using native str concatenation in case f strings introduce room for unexplained behaviour.
+        response = self.client.generate_content(system_prompt + " " +prompt) 
         return response.text
 
 class LLMFactory:
     """Factory for creating LLM instances."""
 
     @staticmethod
-    def create_llm(api_name: str, model_name: str) -> ChatGPTModel|GeminiModel|ValueError: # extremely hacky return type annotation. to rewrite.
+    def create_llm(api_name: str, model_name: str) -> ChatGPTModel|GeminiModel|ValueError: # extremely hacky type annotation. to rewrite.
         if api_name.lower() == "chatgpt":
             return ChatGPTModel(model_name)
         elif api_name.lower() == "gemini":
